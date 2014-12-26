@@ -58,23 +58,34 @@ public void DownloadTextFile(HttpWebResponse response, String filename)
         }
         
         
-        const string url = "http://wyxy4.yzu.edu.cn/horizonread1/UNIT{0}-{1}-lw.htm";
+        static void Main(string[] args)
+        {
+            const string url = "http://wyxy4.yzu.edu.cn/horizonread{2}/UNIT{0}-{1}-lw.htm";
 
-            List<string> wordsUrls = new List<string>();
+            var wordsUrls = new List<string>();
 
-            string flag = "A";
-            for (int i = 1; i <= 10; i++)
+            string textBook = "A";
+            for (int lession = 1; lession <= 4; lession++)
             {
-
-                wordsUrls.Add(string.Format(url, i.ToString().PadLeft(2, '0'), flag));
-
-                if (flag == "A")
+                // can not access lession 2
+                if (lession == 2)
                 {
-                    flag = "B";
+                    continue;
                 }
-                else
+
+                for (int unit = 1; unit <= 10; unit++)
                 {
-                    flag = "A";
+                   var lessionNum = unit.ToString().PadLeft(2, '0');
+                   wordsUrls.Add(string.Format(url, lessionNum, textBook, lession));
+
+                    if (textBook == "A")
+                    {
+                        textBook = "B";
+                    }
+                    else
+                    {
+                        textBook = "A";
+                    }
                 }
             }
 
@@ -87,8 +98,11 @@ public void DownloadTextFile(HttpWebResponse response, String filename)
                     Directory.CreateDirectory("c:\\temp");
                 }
 
-            
+                d.Download(new Uri(wordurl), localFile);
+                Console.Write("Downloading page:");
+                Console.WriteLine(wordurl);
+                Console.Write("Downloading completed!!!");
+                Console.ReadKey();
+            }
 
-            d.Download(new Uri(wordurl), localFile);
-            Console.Write("Downloading page:");
-            Console.WriteLine(wordurl);
+        }
