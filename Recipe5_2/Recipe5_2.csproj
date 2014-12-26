@@ -65,7 +65,9 @@
     <Compile Include="AuthDownloadURL.cs" />
     <Compile Include="Course.cs" />
     <Compile Include="NewWord.cs" />
+    <Compile Include="Paraphrase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Unit.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

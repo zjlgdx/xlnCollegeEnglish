@@ -13,3 +13,9 @@ E:\source code\Recipe5_2\bin\Debug\Recipe5_2.exe
 E:\source code\Recipe5_2\bin\Debug\Recipe5_2.pdb
 E:\source code\Recipe5_2\bin\Debug\Newtonsoft.Json.dll
 E:\source code\Recipe5_2\obj\Debug\Recipe5_2.csprojResolveAssemblyReference.cache
+C:\Users\Yibang\xlnCollegeEnglish\Recipe5_2\bin\Debug\Recipe5_2.exe.config
+C:\Users\Yibang\xlnCollegeEnglish\Recipe5_2\obj\Debug\Recipe5_2.exe
+C:\Users\Yibang\xlnCollegeEnglish\Recipe5_2\obj\Debug\Recipe5_2.pdb
+C:\Users\Yibang\xlnCollegeEnglish\Recipe5_2\bin\Debug\Recipe5_2.exe
+C:\Users\Yibang\xlnCollegeEnglish\Recipe5_2\bin\Debug\Recipe5_2.pdb
+C:\Users\Yibang\xlnCollegeEnglish\Recipe5_2\bin\Debug\Newtonsoft.Json.dll

@@ -65,8 +65,8 @@ namespace Recipe5_2
         {
             byte[] buffer = new byte[4096];
             FileStream os = new FileStream(filename, FileMode.Create);
-            StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.ASCII);
-            StreamWriter writer = new StreamWriter(os, System.Text.Encoding.ASCII);
+            StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.GetEncoding("GB2312"));
+            StreamWriter writer = new StreamWriter(os, System.Text.Encoding.UTF8);
 
             String line;
             do
@@ -94,12 +94,23 @@ namespace Recipe5_2
         /// <param name="pwd">The password to use.</param>
         public void Download(Uri remoteURL, String localFile)
         {
-           // NetworkCredential networkCredential = new NetworkCredential(uid, pwd);
+            // NetworkCredential networkCredential = new NetworkCredential(uid, pwd);
             WebRequest http = HttpWebRequest.Create(remoteURL);
-            //http.PreAuthenticate = true;
-            //http.Credentials = networkCredential;
-            HttpWebResponse response = (HttpWebResponse)http.GetResponse();
 
+            // http://blogs.msdn.com/b/jpsanders/archive/2009/03/24/httpwebrequest-webexcepton-the-remote-server-returned-an-error-407-proxy-authentication-required.aspx
+            // Begin code change by jeff
+            //  Obtain the 'Proxy' of the  Default browser. 
+            IWebProxy theProxy = http.Proxy;
+            // Print the Proxy Url to the console.
+            if (theProxy != null)
+            {
+                // Use the default credentials of the logged on user.
+                theProxy.Credentials = CredentialCache.DefaultCredentials;
+            }
+            // End code change by jeff
+
+            HttpWebResponse response = (HttpWebResponse)http.GetResponse();
+            String chars = response.CharacterSet;
             String type = response.Headers["Content-Type"].ToLower().Trim();
             if (type.StartsWith("text"))
                 DownloadTextFile(response, localFile);
@@ -115,45 +126,71 @@ namespace Recipe5_2
         /// <param name="args">Program arguments.</param>
         static void Main(string[] args)
         {
-            //AuthDownloadURL d = new AuthDownloadURL();
-            //if (args.Length != 4)
-            //{
-            //    d.Download(new Uri("https://www.httprecipes.com/1/5/secure/"),
-            //        "test.html");
-            //}
-            //else
-            //{
+            const string rootFolder = "c:\\temp";
+            const string lessionfolder = "horizonread{0}";
+            const string url = "http://wyxy4.yzu.edu.cn/" + lessionfolder + "/UNIT{1}-{2}-lw.htm";
 
-            //    d.Download(new Uri(args[0]), args[1]);
-            //}
-            string bookId = "1";
-            //for (int i = 1; i <=4; i++)
-            //{
-            //    DownloadCourseUnit(i.ToString());
-            //}
-            //1/01p2newword.htm
-            //1/01p3newword1.htm
-            //1/06p2newword1
-            //06p3newword1
+            var wordsUrls = new List<string>();
 
-            List<string> courses = new List<string>();
-            int cccd = 4;
-            for (int i = 2; i <= 4; i++)
+            string textBook = "A";
+         
+            if (!Directory.Exists(rootFolder))
             {
-                
-                for (int j = 1; j <= 2; j++)
+                Directory.CreateDirectory(rootFolder);
+            }
+
+            Recipe5_2.AuthDownloadURL d = new AuthDownloadURL();
+
+            for (int lession = 1; lession <= 4; lession++)
+            { 
+                // can not access lession 2
+                if (lession == 2)
                 {
-                    //courses.Add(string.Format("{0}/0{1}p2newword1.htm",i,j));
-                    courses.Add(string.Format("{0}/0{1}p3newword1.htm", i, j));
+                    continue;
                 }
-                cccd = 1;
+
+                for (int unit = 1; unit <= 10; unit++)
+                {
+                    var lessionNum = unit.ToString().PadLeft(2, '0');
+                    var wordUrl = string.Format(url, lession, lessionNum, textBook);
+
+                    if (textBook == "A")
+                    {
+                        textBook = "B";
+                    }
+                    else
+                    {
+                        textBook = "A";
+                    }
+
+                    var lessionfolderFormat = string.Format(lessionfolder, lession);
+
+                    var subfolder = Path.Combine(rootFolder, lessionfolderFormat);
+
+                    if (!Directory.Exists(subfolder))
+                    {
+                        Console.Write("create folder:");
+                        Console.WriteLine(subfolder);
+                        Directory.CreateDirectory(subfolder);
+                    }
+                    var filename = wordUrl.Substring(wordUrl.LastIndexOf("/") + 1);
+                    string localFile = Path.Combine(subfolder, filename);
+
+                    Console.Write("Downloading page:");
+                    Console.WriteLine(wordUrl);
+
+                    d.Download(new Uri(wordUrl), localFile);
+
+                    Console.Write("Saving file:");
+                    Console.WriteLine(localFile);
+                }
+                
             }
-            //string courseId = "1/01p2newword1.htm";
-            foreach (var course in courses)
-            {
-                DownloadWord(course);
-            }
-            
+
+
+            Console.Write("Downloading completed!!!");
+            Console.ReadKey();
+
         }
 
         private const string COLLEGE_ENGLISH_ONLINE_BOOK_URL =
@@ -183,17 +220,17 @@ namespace Recipe5_2
         /// </summary>
         /// <param name="bookId"></param>
         /// <returns></returns>
-        private static void  DownloadCourseUnit(string bookId)
+        private static void DownloadCourseUnit(string bookId)
         {
             string url = string.Format(COLLEGE_ENGLISH_ONLINE_BOOK_URL, bookId);
 
-            DirectoryInfo directoryInfo = new DirectoryInfo("E:\\collegeEnglish\\integrated"+bookId);
+            DirectoryInfo directoryInfo = new DirectoryInfo("E:\\collegeEnglish\\integrated" + bookId);
             if (!directoryInfo.Exists)
             {
                 directoryInfo.Create();
             }
 
-            if (!Directory.Exists("E:\\collegeEnglish\\integrated" + bookId+"\\unitlist"))
+            if (!Directory.Exists("E:\\collegeEnglish\\integrated" + bookId + "\\unitlist"))
             {
                 Directory.CreateDirectory("E:\\collegeEnglish\\integrated" + bookId + "\\unitlist");
             }
@@ -238,13 +275,13 @@ namespace Recipe5_2
                         var imageUrl = url + image;
                         var imagePath = (image).Replace("/", "_");
                         var picpath = unitdirectory;
-                        new AuthDownloadURL().Download(new Uri(imageUrl), picpath +"\\" + imagePath);
+                        new AuthDownloadURL().Download(new Uri(imageUrl), picpath + "\\" + imagePath);
                         //courses.Add(new Course { CourseId = string.Format(COURSE_ID, bookId, ++index), CourseName = imagePath, CourseImage = imagePath });
 
                         //Stream stream = await client.OpenReadTaskAsync(imageUrl);
                         //await FileStorageOperations.SaveToLocalFolderAsync(imagePath, stream);
 
-                        unitLists.Add(new UnitList() { UnitID = href.Replace(".htm", ""), UnitName = courseMapping[href], UnitImage = (picpath + "\\" + imagePath).Replace("E:\\collegeEnglish\\","") });
+                        unitLists.Add(new UnitList() { UnitID = href.Replace(".htm", ""), UnitName = courseMapping[href], UnitImage = (picpath + "\\" + imagePath).Replace("E:\\collegeEnglish\\", "") });
 
                         //progressBar1.Value += progressBar1.LargeChange;
                     }
@@ -446,7 +483,7 @@ namespace Recipe5_2
             var wordId = 0;
             double totalCount = matchParagraphes.Count;
             var percentage = 1d / totalCount * 100d;
-          //  progressBar1.LargeChange = percentage;
+            //  progressBar1.LargeChange = percentage;
             Console.WriteLine(percentage);
 
             foreach (Match matchParagraph in matchParagraphes)
@@ -581,7 +618,7 @@ namespace Recipe5_2
                 }
 
                 var mp3fullname = basePath + "\\" + mp3.Replace("/", "\\");
-                var mp3Path = "integrated" + GetCoursePathName(course.CourseId) +"\\" + mp3.Replace("/", "\\");// course.CourseName + objWord.WordId + mp3;
+                var mp3Path = "integrated" + GetCoursePathName(course.CourseId) + "\\" + mp3.Replace("/", "\\");// course.CourseName + objWord.WordId + mp3;
                 //mp3Path = mp3Path.Replace("/", "");
                 if (index == 0)
                 {
