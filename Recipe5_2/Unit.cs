@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web;
 
-namespace Recipe5_2
+namespace WebApplication1
 {
     class Unit
     {
-        public string Word { get; set; }
-        public string Voice { get; set; }
-        public ICollection<Definition> Definitions { get; set; }
+        public string UnitTitle { get; set; }
+        public ICollection<Vocabulary> Vocabularies { get; set; }
     }
 }

@@ -8,6 +8,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ColleageEnglishVocaburary.Model;
+using WebApplication1;
+using System.Linq;
 
 namespace Recipe5_2
 {
@@ -119,12 +121,126 @@ namespace Recipe5_2
 
         }
 
+        static void DownloadMp3()
+        {
+            //http://wyxy4.yzu.edu.cn/horizonread1/sounds/nw-unit01-a-01.mp3
+            const string rootFolder = "c:\\temp";
+            const string lessionName = "horizonread{0}";
+            const string baseurl = "http://wyxy4.yzu.edu.cn/" + lessionName;
+
+            //var mp3Urls = new List<string>();
+
+            //C:\temp\horizonread1\UNIT02\UNIT02_A.json
+
+            if (!Directory.Exists(rootFolder))
+            {
+                Console.WriteLine("no such folder:" + rootFolder);
+                return;
+            }
+
+            Recipe5_2.AuthDownloadURL d = new AuthDownloadURL();
+
+            for (int lession = 1; lession <= 4; lession++)
+            {
+                // can not access lession 2
+                if (lession == 2)
+                {
+                    continue;
+                }
+
+                // C:\temp\horizonread1
+                var lessionFolder = Path.Combine(rootFolder, string.Format(lessionName, lession));
+
+                if (!Directory.Exists(lessionFolder))
+                {
+                    Console.WriteLine("no such folder:" + lessionFolder);
+                    return;
+                }
+
+                for (int unit = 1; unit <= 10; unit++)
+                {
+                    string textBook = "A";
+
+                    int count = 0;
+                    while (count < 2)
+                    {
+                        var unitNum = unit.ToString().PadLeft(2, '0');
+                        ////C:\temp\horizonread1\UNIT02\UNIT02_A.json
+                        //C:\temp\horizonread1\UNIT02\UNIT02_A.json
+                        var unitName = "UNIT" + unitNum;
+                        var unitFolder = Path.Combine(lessionFolder, unitName);
+                        var unitfilename = Path.Combine(unitFolder, unitName + "_" + textBook + ".json");
+                        if (!File.Exists(unitfilename))
+                        {
+                            Console.WriteLine("no such file:" + unitfilename);
+                            return;
+                        }
+
+                        var json = File.ReadAllText(unitfilename);
+                        var objunit = JsonConvert.DeserializeObject<Unit>(json);
+                        var mp3s = objunit.Vocabularies.Select(m => m.Voice);
+
+                        foreach (var mp3 in mp3s)
+                        {
+                            var mp3Url = string.Format(baseurl, lession) + "/" + mp3;
+                            Console.Write("Downloading voice:");
+                            Console.WriteLine(mp3Url);
+
+                            var soundFolder = Path.Combine(lessionFolder, "sounds");
+
+                            if (!Directory.Exists(soundFolder))
+                            {
+                                Console.Write("create folder:");
+                                Console.WriteLine(soundFolder);
+                                Directory.CreateDirectory(soundFolder);
+                            }
+                            //sounds/nw-unit01-a-01.mp3
+
+                            string localFile = Path.Combine(lessionFolder, mp3).Replace("/", "\\");
+
+                            d.Download(new Uri(mp3Url), localFile);
+                            Console.Write("Saving file:");
+                            Console.WriteLine(localFile);
+
+                        }
+
+                        if (textBook == "A")
+                        {
+                            textBook = "B";
+                        }
+                        else
+                        {
+                            textBook = "A";
+                        }
+
+                        count++;
+                    }
+                }
+
+            }
+
+
+            Console.Write("Downloading completed!!!");
+            Console.ReadKey();
+
+        }
 
         /// <summary>
         /// The main entry point for the program.
         /// </summary>
         /// <param name="args">Program arguments.</param>
         static void Main(string[] args)
+        {
+            //DownloadUnitPage();
+            DownloadMp3();
+
+
+            Console.Write("Downloading completed!!!");
+            Console.ReadKey();
+
+        }
+
+        private static void DownloadUnitPage()
         {
             // 参考：.NET正则基础之——平衡组(http://blog.csdn.net/lxcnn/article/details/4402808)
             // 3.2.2  根据id提取div嵌套标签
@@ -163,12 +279,12 @@ namespace Recipe5_2
                     continue;
                 }
 
-                
+
 
                 for (int unit = 1; unit <= 10; unit++)
                 {
                     string textBook = "A";
-                    
+
 
                     int count = 0;
                     while (count < 2)
@@ -226,11 +342,6 @@ namespace Recipe5_2
                 }
 
             }
-
-
-            Console.Write("Downloading completed!!!");
-            Console.ReadKey();
-
         }
 
         private const string COLLEGE_ENGLISH_ONLINE_BOOK_URL =

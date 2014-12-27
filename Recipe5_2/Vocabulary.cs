@@ -7,12 +7,10 @@ using System.Threading.Tasks;
 
 namespace WebApplication1
 {
-    class Definition
+    class Vocabulary
     {
-        /// <summary>
-        /// 词性
-        /// </summary>
-        public string PartofSpeech { get; set; }
-        public string Paraphrase { get; set; }
+        public string Word { get; set; }
+        public string Voice { get; set; }
+        public ICollection<Definition> Definitions { get; set; }
     }
 }
