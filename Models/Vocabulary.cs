@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Recipe5_2
+namespace Models
 {
-    class Unit
+    public class Vocabulary
     {
         public string Word { get; set; }
-        public string Symbol { get; set; }
+        public string Voice { get; set; }
         public ICollection<Definition> Definitions { get; set; }
     }
 }

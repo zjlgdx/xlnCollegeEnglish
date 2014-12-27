@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebApplication1
+namespace Models
 {
-    class Definition
+    public class Definition
     {
         /// <summary>
         /// 词性
