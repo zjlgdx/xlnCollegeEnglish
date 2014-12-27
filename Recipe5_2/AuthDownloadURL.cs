@@ -126,14 +126,28 @@ namespace Recipe5_2
         /// <param name="args">Program arguments.</param>
         static void Main(string[] args)
         {
+            // 参考：.NET正则基础之——平衡组(http://blog.csdn.net/lxcnn/article/details/4402808)
+            // 3.2.2  根据id提取div嵌套标签
+            const string SPAN_PATTERN = @"(?isx)
+                      <span(?:(?!(?:id=|</?span\b)).)*id=(['""]?){0}\1[^>]*>        #开始标记“<span...>”
+                          (?>                         #分组构造，用来限定量词“*”修饰范围
+                              <span[^>]*>  (?<Open>)   #命名捕获组，遇到开始标记，入栈，Open计数加1
+                          |                           #分支结构
+                              </span>  (?<-Open>)      #狭义平衡组，遇到结束标记，出栈，Open计数减1
+                          |                           #分支结构
+                              (?:(?!</?span\b).)*      #右侧不为开始或结束标记的任意字符
+                          )*                          #以上子串出现0次或任意多次
+                          (?(Open)(?!))               #判断是否还有'OPEN'，有则说明不配对，什么都不匹配
+                      </span>                          #结束标记“</span>”
+                     ";
             const string rootFolder = "c:\\temp";
             const string lessionfolder = "horizonread{0}";
             const string url = "http://wyxy4.yzu.edu.cn/" + lessionfolder + "/UNIT{1}-{2}-lw.htm";
 
             var wordsUrls = new List<string>();
 
-            string textBook = "A";
-         
+
+
             if (!Directory.Exists(rootFolder))
             {
                 Directory.CreateDirectory(rootFolder);
@@ -142,49 +156,75 @@ namespace Recipe5_2
             Recipe5_2.AuthDownloadURL d = new AuthDownloadURL();
 
             for (int lession = 1; lession <= 4; lession++)
-            { 
+            {
                 // can not access lession 2
                 if (lession == 2)
                 {
                     continue;
                 }
 
+                
+
                 for (int unit = 1; unit <= 10; unit++)
                 {
-                    var lessionNum = unit.ToString().PadLeft(2, '0');
-                    var wordUrl = string.Format(url, lession, lessionNum, textBook);
+                    string textBook = "A";
+                    
 
-                    if (textBook == "A")
+                    int count = 0;
+                    while (count < 2)
                     {
-                        textBook = "B";
+                        var lessionNum = unit.ToString().PadLeft(2, '0');
+                        var wordUrl = string.Format(url, lession, lessionNum, textBook);
+
+                        var lessionfolderFormat = string.Format(lessionfolder, lession);
+
+                        var subfolder = Path.Combine(rootFolder, lessionfolderFormat);
+
+                        if (!Directory.Exists(subfolder))
+                        {
+                            Console.Write("create folder:");
+                            Console.WriteLine(subfolder);
+                            Directory.CreateDirectory(subfolder);
+                        }
+                        var filename = wordUrl.Substring(wordUrl.LastIndexOf("/") + 1);
+                        string localFile = Path.Combine(subfolder, filename);
+
+                        Console.Write("Downloading page:");
+                        Console.WriteLine(wordUrl);
+
+                        d.Download(new Uri(wordUrl), localFile);
+
+                        var client = new WebClient();
+                        client.Encoding = System.Text.Encoding.GetEncoding("GB2312");
+                        string response = client.DownloadString(new Uri(wordUrl));
+                        var nwareamatch = Regex.Match(response, string.Format(SPAN_PATTERN, "nw-area"));
+                        if (nwareamatch.Success)
+                        {
+                            File.WriteAllText(localFile, nwareamatch.Value, Encoding.UTF8);
+                        }
+
+                        var lpareamatch = Regex.Match(response, string.Format(SPAN_PATTERN, "lp-area"));
+                        if (lpareamatch.Success)
+                        {
+                            File.AppendAllText(localFile, lpareamatch.Value, Encoding.UTF8);
+                        }
+
+                        Console.Write("Saving file:");
+                        Console.WriteLine(localFile);
+
+                        if (textBook == "A")
+                        {
+                            textBook = "B";
+                        }
+                        else
+                        {
+                            textBook = "A";
+                        }
+
+                        count++;
                     }
-                    else
-                    {
-                        textBook = "A";
-                    }
-
-                    var lessionfolderFormat = string.Format(lessionfolder, lession);
-
-                    var subfolder = Path.Combine(rootFolder, lessionfolderFormat);
-
-                    if (!Directory.Exists(subfolder))
-                    {
-                        Console.Write("create folder:");
-                        Console.WriteLine(subfolder);
-                        Directory.CreateDirectory(subfolder);
-                    }
-                    var filename = wordUrl.Substring(wordUrl.LastIndexOf("/") + 1);
-                    string localFile = Path.Combine(subfolder, filename);
-
-                    Console.Write("Downloading page:");
-                    Console.WriteLine(wordUrl);
-
-                    d.Download(new Uri(wordUrl), localFile);
-
-                    Console.Write("Saving file:");
-                    Console.WriteLine(localFile);
                 }
-                
+
             }
 
 

@@ -13,15 +13,6 @@ namespace Recipe5_2
         /// 词性
         /// </summary>
         public string PartofSpeech { get; set; }
-        public string EnglishParaphrase { get; set; }
-        public string ChineseParaphrase { get; set; }
-        public string Phrase { get; set; }
-        public ICollection<Example> Examples { get; set; }
-    }
-
-    class Example
-    {
-        public string Sentence { get; set; }
-        public string Translate { get; set; }
+        public string Paraphrase { get; set; }
     }
 }

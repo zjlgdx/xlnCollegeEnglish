@@ -10,7 +10,7 @@ namespace Recipe5_2
     class Unit
     {
         public string Word { get; set; }
-        public string Symbol { get; set; }
+        public string Voice { get; set; }
         public ICollection<Definition> Definitions { get; set; }
     }
 }

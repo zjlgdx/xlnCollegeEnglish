@@ -39,6 +39,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.7\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -57,6 +61,60 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="horizonread1\UNIT01-B-lw.htm" />
+    <Content Include="horizonread1\UNIT02-A-lw.htm" />
+    <Content Include="horizonread1\UNIT03-B-lw.htm" />
+    <Content Include="horizonread1\UNIT04-A-lw.htm" />
+    <Content Include="horizonread1\UNIT05-B-lw.htm" />
+    <Content Include="horizonread1\UNIT06-A-lw.htm" />
+    <Content Include="horizonread1\UNIT07-B-lw.htm" />
+    <Content Include="horizonread1\UNIT08-A-lw.htm" />
+    <Content Include="horizonread1\UNIT09-B-lw.htm" />
+    <Content Include="horizonread1\UNIT10-A-lw.htm" />
+    <Content Include="horizonread3\UNIT01-B-lw.htm" />
+    <Content Include="horizonread3\UNIT02-A-lw.htm" />
+    <Content Include="horizonread3\UNIT03-B-lw.htm" />
+    <Content Include="horizonread3\UNIT04-A-lw.htm" />
+    <Content Include="horizonread3\UNIT05-A-lw.htm" />
+    <Content Include="horizonread3\UNIT05-B-lw.htm" />
+    <Content Include="horizonread3\UNIT06-A-lw.htm" />
+    <Content Include="horizonread3\UNIT06-B-lw.htm" />
+    <Content Include="horizonread3\UNIT07-A-lw.htm" />
+    <Content Include="horizonread3\UNIT07-B-lw.htm" />
+    <Content Include="horizonread3\UNIT08-A-lw.htm" />
+    <Content Include="horizonread3\UNIT08-B-lw.htm" />
+    <Content Include="horizonread3\UNIT09-A-lw.htm" />
+    <Content Include="horizonread3\UNIT09-B-lw.htm" />
+    <Content Include="horizonread3\UNIT10-A-lw.htm" />
+    <Content Include="horizonread3\UNIT10-B-lw.htm" />
+    <Content Include="horizonread4\UNIT01-A-lw.htm" />
+    <Content Include="horizonread4\UNIT01-B-lw.htm" />
+    <Content Include="horizonread4\UNIT02-A-lw.htm" />
+    <Content Include="horizonread4\UNIT02-B-lw.htm" />
+    <Content Include="horizonread4\UNIT03-A-lw.htm" />
+    <Content Include="horizonread4\UNIT03-B-lw.htm" />
+    <Content Include="horizonread4\UNIT04-A-lw.htm" />
+    <Content Include="horizonread4\UNIT04-B-lw.htm" />
+    <Content Include="horizonread4\UNIT05-A-lw.htm" />
+    <Content Include="horizonread4\UNIT05-B-lw.htm" />
+    <Content Include="horizonread4\UNIT06-A-lw.htm" />
+    <Content Include="horizonread4\UNIT06-B-lw.htm" />
+    <Content Include="horizonread4\UNIT07-A-lw.htm" />
+    <Content Include="horizonread4\UNIT07-B-lw.htm" />
+    <Content Include="horizonread4\UNIT08-A-lw.htm" />
+    <Content Include="horizonread4\UNIT08-B-lw.htm" />
+    <Content Include="horizonread4\UNIT09-A-lw.htm" />
+    <Content Include="horizonread4\UNIT09-B-lw.htm" />
+    <Content Include="horizonread4\UNIT10-A-lw.htm" />
+    <Content Include="horizonread4\UNIT10-B-lw.htm" />
+    <Content Include="images\pb_pl.gif" />
+    <Content Include="images\pb_ps.gif" />
+    <Content Include="images\playing.gif" />
+    <Content Include="images\stoped.gif" />
+    <Content Include="images\wtagl.gif" />
+    <Content Include="images\wtagr.gif" />
+    <Content Include="UnitHandler.ashx" />
+    <Content Include="GetUnitPageHandler.ashx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -66,7 +124,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
-    <Content Include="home.aspx" />
     <Content Include="home.html" />
     <Content Include="horizonread1\UNIT01-A-lw.htm" />
     <Content Include="horizonread1\UNIT02-B-lw.htm" />
@@ -91,19 +148,21 @@
     <Content Include="Scripts\jquery-2.1.1.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Definition.cs" />
+    <Compile Include="GetUnitPageHandler.ashx.cs">
+      <DependentUpon>GetUnitPageHandler.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
-    <Compile Include="home.aspx.cs">
-      <DependentUpon>home.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="home.aspx.designer.cs">
-      <DependentUpon>home.aspx</DependentUpon>
     </Compile>
     <Compile Include="Models\Definition.cs" />
     <Compile Include="Models\Unit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Unit.cs" />
+    <Compile Include="Vocabulary.cs" />
+    <Compile Include="UnitHandler.ashx.cs">
+      <DependentUpon>UnitHandler.ashx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
