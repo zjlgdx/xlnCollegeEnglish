@@ -11,6 +11,8 @@ namespace Models
     {
         public string Word { get; set; }
         public string Voice { get; set; }
-        public ICollection<Definition> Definitions { get; set; }
+        public string Definition { get; set; }
+        public string Paraphrase { get; set; }
+        public string ParaphraseVoice { get; set; }
     }
 }

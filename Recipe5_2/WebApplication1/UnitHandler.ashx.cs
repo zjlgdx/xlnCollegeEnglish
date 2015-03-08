@@ -25,13 +25,14 @@ namespace WebApplication1
             var objUnit = Deserialize<Unit>(context);
             string json = JsonConvert.SerializeObject(objUnit);
             //__horizonread1_UNIT03_A_lw_htm
+            //__horizonread1_01p2newword1_htm
             var rootFolder = "c:\\temp";
 
             if (!Directory.Exists(rootFolder))
             {
                 Directory.CreateDirectory(rootFolder);
             }
-
+            //
             var list = objUnit.UnitTitle.Split(new char[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
             var lession = list[0];
             var lessionFolder = Path.Combine(rootFolder, lession);
@@ -40,18 +41,32 @@ namespace WebApplication1
                 Directory.CreateDirectory(lessionFolder);
             }
 
-            var unit = list[1];
+            var unit = list[1].Substring(0,2);
             var unitFolder = Path.Combine(lessionFolder, unit);
             if (!Directory.Exists(unitFolder))
             {
                 Directory.CreateDirectory(unitFolder);
             }
 
-            var unitBook = unit + "_" + list[2] + ".json";
+            var unitBook = unit + "_" + getTextBook(list[1]) + ".json";
             var filename = Path.Combine(unitFolder, unitBook);
             File.WriteAllText(filename, json);
 
             context.Response.Write("success.");
+        }
+
+        private string getTextBook(string input) {
+            //01p2newword1
+            var textbook = input.Substring(2, 2);
+            switch (textbook)
+            {
+                case "p2":
+                    return "A";
+                case "p3":
+                    return "B";
+                default:
+                    return string.Empty;
+            }
         }
 
         /// <summary>
